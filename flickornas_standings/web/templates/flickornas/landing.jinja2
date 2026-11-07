@@ -1,0 +1,47 @@
+{% extends "flickornas/base.jinja2" %}
+
+{% block title %}{{ t("home.title") }} · {{ t("app.name") }}{% endblock %}
+
+{% block content %}
+    <div class="mb-4">
+        <h1>{{ t("home.title") }}</h1>
+        <p class="lead">{{ t("home.intro") }}</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <section class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title h4">{{ t("home.configuration.title") }}</h2>
+                    {% if configuration %}
+                        <p class="card-text">
+                            {{ t("home.configuration.ready", count=configuration.default_tournament_ids | length) }}
+                        </p>
+                        <a class="btn btn-primary" href="{{ url_for('flickornas.configuration', lang=locale) }}">
+                            {{ t("nav.configuration") }}
+                        </a>
+                    {% else %}
+                        <p class="card-text text-danger">{{ t("home.configuration.invalid") }}</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+        <div class="col-md-6">
+            <section class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title h4">{{ t("home.available_files.title") }}</h2>
+                    <p class="card-text">
+                        {% if available_files %}
+                            {{ t("home.available_files.count", count=available_files | length) }}
+                        {% else %}
+                            {{ t("available_files.empty") }}
+                        {% endif %}
+                    </p>
+                    <a class="btn btn-outline-primary" href="{{ url_for('flickornas.available_files', lang=locale) }}">
+                        {{ t("nav.available_files") }}
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

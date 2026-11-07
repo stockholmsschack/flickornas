@@ -1,0 +1,28 @@
+{
+  "id": 6555,
+  "name": "Fel rotklass",
+  "start": "2026-03-01",
+  "end": "2026-03-02",
+  "rootClasses": [
+    {
+      "groups": [
+        {
+          "id": 7200,
+          "name": "Final",
+          "nrofrounds": 5,
+          "pointSystem": "3-2-1"
+        }
+      ]
+    },
+    {
+      "groups": [
+        {
+          "id": 7201,
+          "name": "Klass A",
+          "nrofrounds": 5,
+          "pointSystem": "3-2-1"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": 6336,
+  "name": "Flickornas testturnering",
+  "start": "2026-01-10",
+  "end": "2026-01-10",
+  "rootClasses": [
+    {
+      "groups": [
+        {
+          "id": 7001,
+          "name": "Klass A",
+          "nrofrounds": 5,
+          "pointSystem": "3-2-1"
+        },
+        {
+          "id": 7002,
+          "name": "Final",
+          "nrofrounds": 5,
+          "pointSystem": "3-2-1"
+        }
+      ]
+    }
+  ]
+}

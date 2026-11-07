@@ -1,0 +1,19 @@
+{% macro naming_problems(problems) %}
+    {% if problems %}
+        <ul class="mb-0">
+            {% for problem in problems %}
+                {% set params = problem.parameters %}
+                {% set message = t(problem.message_key,
+                    tournament_name=params.tournament_name,
+                    group_name='__group_name__', group_id=params.group_id,
+                    tournament_id=params.tournament_id) %}
+                {% set parts = message.split('__group_name__') %}
+                <li>{{ parts[0] | e }}<code>{{ params.group_name | e }}</code>{{ parts[1] | e }}</li>
+            {% endfor %}
+        </ul>
+        <p class="mt-2 mb-1">{{ t('klass_naming.retry') }}</p>
+        <a class="alert-link" href="{{ url_for('flickornas.klass_naming_help', lang=locale) }}">
+            {{ t('klass_naming.help_link') }}
+        </a>
+    {% endif %}
+{% endmacro %}

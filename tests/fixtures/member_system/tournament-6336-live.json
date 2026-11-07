@@ -1,0 +1,269 @@
+{
+  "id": 6336,
+  "name": "Tjejträffen 2026",
+  "start": "2026-01-10",
+  "end": "2026-01-10",
+  "city": "",
+  "arena": "",
+  "type": 3,
+  "ia": 408877,
+  "secjudges": "",
+  "thinkingTime": "10+5",
+  "allowForeignPlayers": 1,
+  "teamtournamentPlayerListType": -1,
+  "ageFilter": 0,
+  "nrOfPartLink": "",
+  "orgType": 1,
+  "orgNumber": 38456,
+  "ratingRegDate": null,
+  "ratingRegDate2": null,
+  "fideregged": 1,
+  "online": -1,
+  "y2cRules": -1,
+  "teamNrOfDaysRegged": 0,
+  "showPublic": 1,
+  "invitationurl": "",
+  "latestUpdated": null,
+  "secParsedJudges": [],
+  "rootClasses": [
+    {
+      "classID": 7195,
+      "tournamentID": 6336,
+      "parentClassID": -1,
+      "order": 100,
+      "className": "Tjejträffen 2026",
+      "numberOfTeamsToGoUpClass": 1,
+      "numberOfTeamsToGoDownClass": 1,
+      "percentageOfPointsToGoUpClass": -1,
+      "percentageOfPointsToGoDownClass": -1,
+      "gamesUrl": "",
+      "groups": [
+        {
+          "id": 17724,
+          "classID": 7195,
+          "name": "Öppen klass",
+          "pairingSystemMember": 4,
+          "order": -5880,
+          "start": "2026-01-10",
+          "end": "2026-01-10",
+          "numberOfTeamsToGoUpClass": 1,
+          "numberOfTeamsToGoDownClass": 0,
+          "percentageOfPointsToGoUpClass": 0,
+          "percentageOfPointsToGoDownClass": 0,
+          "playersinteam": 0,
+          "doubleRounded": -1,
+          "cost": 0,
+          "possibleToRegister": -1,
+          "tiebreakSystem": 3,
+          "pointSystem": -1,
+          "printName": "Tjejträffen 2026 Öppen klass",
+          "rankingAlgorithm": 6,
+          "splitgroupSize": -1,
+          "nrofrounds": 7,
+          "arenaStart": [
+            0,
+            0
+          ],
+          "arenaEnd": [
+            23,
+            59
+          ],
+          "registrationCategories": [],
+          "prizeCategories": [],
+          "tournamentRounds": [
+            {
+              "id": 77066,
+              "groupId": 17724,
+              "roundNumber": 1,
+              "roundDate": "2026-01-10",
+              "rated": 2,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77077,
+              "groupId": 17724,
+              "roundNumber": 2,
+              "roundDate": "2026-01-10",
+              "rated": 2,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77084,
+              "groupId": 17724,
+              "roundNumber": 3,
+              "roundDate": "2026-01-10",
+              "rated": 2,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77090,
+              "groupId": 17724,
+              "roundNumber": 4,
+              "roundDate": "2026-01-10",
+              "rated": 2,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77107,
+              "groupId": 17724,
+              "roundNumber": 5,
+              "roundDate": "2026-01-10",
+              "rated": 2,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77115,
+              "groupId": 17724,
+              "roundNumber": 6,
+              "roundDate": "2026-01-10",
+              "rated": 2,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77120,
+              "groupId": 17724,
+              "roundNumber": 7,
+              "roundDate": "2026-01-10",
+              "rated": 2,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            }
+          ]
+        },
+        {
+          "id": 17725,
+          "classID": 7195,
+          "name": "Nybörjarklass",
+          "pairingSystemMember": 4,
+          "order": -4880,
+          "start": "2026-01-10",
+          "end": "2026-01-10",
+          "numberOfTeamsToGoUpClass": 1,
+          "numberOfTeamsToGoDownClass": 1,
+          "percentageOfPointsToGoUpClass": 0,
+          "percentageOfPointsToGoDownClass": 0,
+          "playersinteam": 0,
+          "doubleRounded": -1,
+          "cost": 0,
+          "possibleToRegister": -1,
+          "tiebreakSystem": 3,
+          "pointSystem": 1,
+          "printName": "Tjejträffen 2026 Nybörjarklass",
+          "rankingAlgorithm": 5,
+          "splitgroupSize": -1,
+          "nrofrounds": 7,
+          "arenaStart": [
+            0,
+            0
+          ],
+          "arenaEnd": [
+            23,
+            59
+          ],
+          "registrationCategories": [],
+          "prizeCategories": [],
+          "tournamentRounds": [
+            {
+              "id": 77216,
+              "groupId": 17725,
+              "roundNumber": 1,
+              "roundDate": "2026-01-10",
+              "rated": 0,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77291,
+              "groupId": 17725,
+              "roundNumber": 2,
+              "roundDate": "2026-01-10",
+              "rated": 0,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77307,
+              "groupId": 17725,
+              "roundNumber": 3,
+              "roundDate": "2026-01-10",
+              "rated": 0,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77314,
+              "groupId": 17725,
+              "roundNumber": 4,
+              "roundDate": "2026-01-10",
+              "rated": 0,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77318,
+              "groupId": 17725,
+              "roundNumber": 5,
+              "roundDate": "2026-01-10",
+              "rated": 0,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77322,
+              "groupId": 17725,
+              "roundNumber": 6,
+              "roundDate": "2026-01-10",
+              "rated": 0,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            },
+            {
+              "id": 77327,
+              "groupId": 17725,
+              "roundNumber": 7,
+              "roundDate": "2026-01-10",
+              "rated": 0,
+              "judgeId": -1,
+              "lockTime": null,
+              "publishTime": null,
+              "matchId": -1
+            }
+          ]
+        }
+      ],
+      "subClasses": []
+    }
+  ]
+}

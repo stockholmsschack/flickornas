@@ -1,0 +1,12 @@
+[
+  {
+    "id": 123,
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "birthdate": "2015",
+    "clubId": 10,
+    "club": "Stockholms SK",
+    "country": "SWE",
+    "fideid": 1700000
+  }
+]

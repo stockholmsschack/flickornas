@@ -1,0 +1,48 @@
+[project]
+name = "stsf-flickornas-standings"
+version = "0.1.0"
+description = "Generate Standings for Girl's tournaments in Stockkholm Chess Federation"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.2",
+    "openpyxl>=3.1.5",
+    "polars>=1.33.0",
+    "requests>=2.32.5",
+    "rich>=14.1.0",
+    "tqdm>=4.69.1",
+    "typer>=0.16.0",
+    "xlsxwriter>=3.2.5",
+]
+
+[project.scripts]
+flickornas = "flickornas_standings.cli:main"
+flickornas-web = "flickornas_standings.web.__main__:main"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+# Install editable with `uv sync`; Typst assets, fonts and configuration live in
+# the checkout. The package namespace avoids collisions with other tools' modules.
+[tool.setuptools.packages.find]
+include = ["flickornas_standings*"]
+namespaces = false
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+# Tests import shared helpers as `tests.<module>`, so the checkout root goes on `sys.path`.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools.package-data]
+"flickornas_standings.web" = [
+    "templates/**/*.jinja2",
+    "static/css/*.css",
+    "static/js/*.js",
+    "locales/*.json",
+]

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "season_year": 2026,
+  "status": "accepted",
+  "accepted_by": "bganesh",
+  "accepted_at": "2026-10-05T21:10:03Z",
+  "acceptance_basis": "The reviewer inspected the PDF rendered from the golden Typst source with typst/build.sh flags and explicitly accepted the spacing change from commit 937be33.",
+  "input_archive": {
+    "path": "2026-intermediate-inputs.zip",
+    "sha256": "c84218ffa778bebfe2e06e23f0c3d0dfc6c231fd5b86978eac749a38be19eec1"
+  },
+  "golden_typst": {
+    "path": "2026-standings-golden.typ",
+    "sha256": "ec4a978bd31ce7eb0b9658825a85307a5c402ba0489b8f06addc23663778b3c2"
+  },
+  "reviewed_pdf": {
+    "path": "2026-standings-reviewed.pdf",
+    "sha256": "562e7030faf83d0910ed9a4a1f39978e5413211ca9e6ae2174e38ed1fe52c442"
+  },
+  "automated_comparison": "byte-for-byte Typst source equality",
+  "comparison_scope_note": "Ignore static non-tabular sections such as typst/rules.typ when evaluating the golden standings output."
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "purpose": "Frozen intermediate inputs from the phase-1 implementation for the partial 2026 Flickornas standings compatibility baseline.",
+  "season_year": 2026,
+  "captured_at": "2026-07-27T08:21:59Z",
+  "derived_rating_list_request_date": "2026-05-30",
+  "archive": "2026-intermediate-inputs.zip",
+  "extraction_root": "project root",
+  "inputs": [
+    {
+      "path": "player_list.json",
+      "bytes": 102367,
+      "sha256": "68a543d0979671bb99f24b2b6d1927911a0b3d7f5aff50f89a2a60971eada7e6"
+    },
+    {
+      "path": "tournament_stats.json",
+      "bytes": 776,
+      "sha256": "510270a692d9a1954d14433e3a1a996905ebd3f41733f2f553b1f5c8562e916b"
+    },
+    {
+      "path": "flick-intermediate/20260110-6336.json",
+      "bytes": 40448,
+      "sha256": "ed6f2c81f289693ec8a814a4fa6e4a4ef439653e65331025e392966a74eea3ee"
+    },
+    {
+      "path": "flick-intermediate/20260307-6544.json",
+      "bytes": 198484,
+      "sha256": "5f8f2ab01bb9f540e4bf402b7d3a8b646061df50101a49aa8c06dda7be9cd4e6"
+    },
+    {
+      "path": "flick-intermediate/20260314-6540.json",
+      "bytes": 282320,
+      "sha256": "8f9964350bbc0b22663406e206a5bae4e95c15f671489b8df464731bff8cd804"
+    },
+    {
+      "path": "flick-intermediate/20260328-6534.json",
+      "bytes": 211450,
+      "sha256": "39bec9f3553d5345d2ab835e3136b38d36c41573f3971626cc2231ecfb8caefd"
+    },
+    {
+      "path": "flick-intermediate/20260425-6685.json",
+      "bytes": 212432,
+      "sha256": "b28994d1f6653d0497874258ce871210031302dc9f0c2b245c1e389de4fd84d2"
+    },
+    {
+      "path": "flick-intermediate/20260523-6826.json",
+      "bytes": 202408,
+      "sha256": "977714d876d7dbcb1ea0cb2d7e410d2b9174a1964e08ec824ce602652e5116b4"
+    },
+    {
+      "path": "flick-intermediate/20260530-6853.json",
+      "bytes": 122248,
+      "sha256": "49b0f97741191fc012eaf2d503b87eca6266094b6a6336cd60a6a859eaf5391d"
+    }
+  ]
+}

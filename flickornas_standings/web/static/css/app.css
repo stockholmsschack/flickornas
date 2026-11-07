@@ -1,0 +1,73 @@
+body {
+    min-height: 100vh;
+}
+
+main.container {
+    max-width: 1100px;
+}
+
+.navbar .form-select {
+    width: auto;
+}
+
+.tournament-search-status,
+.player-name-search-status {
+    min-height: 1.5rem;
+}
+
+[data-tournament-search-results] > .list-group-item:nth-child(even),
+[data-selected-tournaments] > .list-group > .list-group-item:nth-child(even) {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.club-search-results {
+    max-height: 16rem;
+    overflow-y: auto;
+}
+
+.generation-modal-actions {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 1rem;
+    width: 100%;
+}
+
+.generation-modal-actions > * {
+    margin: 0;
+}
+
+.generation-modal-hint {
+    align-self: center;
+    text-align: center;
+}
+
+@media (max-width: 575.98px) {
+    .generation-modal-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .generation-modal-hint {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .generation-modal-cancel {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .generation-modal-primary {
+        grid-column: 2;
+        grid-row: 2;
+        justify-self: end;
+    }
+}
+
+/* No motion: tabs, modals, collapses, buttons and spinners change state instantly. */
+*,
+*::before,
+*::after {
+    animation: none !important;
+    transition: none !important;
+}

@@ -1,0 +1,15 @@
+{#- Flickornas' pages inside the host's shell, or the bundled one standalone. A shell provides the
+    blocks title, head, content and scripts, and loads the shared assets such as Bootstrap. -#}
+{% extends flickornas_base_template %}
+{% block head %}
+    {{ super() }}
+    <link href="{{ url_for('flickornas.static', filename='css/app.css') }}" rel="stylesheet">
+    <link id="group-names-help" rel="help" href="{{ url_for('flickornas.klass_naming_help') }}">
+    {% block extra_css %}{% endblock %}
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script id="locale-catalogue" type="application/json">{{ catalogue | tojson }}</script>
+<script type="module" src="{{ url_for('flickornas.static', filename='js/locale.js') }}"></script>
+{% block extra_js %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,78 @@
+http://playtime.localhost:5000, http://flickornas.localhost:5000, http://127.0.0.1:5000 {
+	mercure {
+		transport bolt {
+			path {$MERCURE_DB_PATH:/tmp/flickornas-mercure.db}
+			size 1000
+		}
+		publisher_jwt {$MERCURE_JWT_SECRET:!ChangeThisMercureHubJWTSecretKey!} {$MERCURE_JWT_ALG:HS256}
+		subscriber_jwt {$MERCURE_JWT_SECRET:!ChangeThisMercureHubJWTSecretKey!} {$MERCURE_JWT_ALG:HS256}
+		anonymous
+		cors_origins http://playtime.localhost:5000 http://flickornas.localhost:5000
+	}
+
+	@flickornas host flickornas.localhost
+	@flickornas_downloads {
+		host flickornas.localhost
+		path /downloads/*
+	}
+	handle @flickornas_downloads {
+		uri strip_prefix /downloads
+		root * {$FLICKORNAS_DOWNLOAD_ROOT:./output/runs}
+		header Content-Disposition "attachment"
+		file_server
+	}
+	@flickornas_reports {
+		host flickornas.localhost
+		path /reports/*
+	}
+	handle @flickornas_reports {
+		uri strip_prefix /reports
+		root * {$FLICKORNAS_DOWNLOAD_ROOT:./output/runs}
+		header Content-Disposition "attachment"
+		file_server
+	}
+	handle @flickornas {
+		reverse_proxy localhost:7001
+	}
+
+	# Playtime static files
+	@playtime_favicon {
+		host playtime.localhost
+		path /favicon.ico
+	}
+	handle @playtime_favicon {
+		root * ../playtime/src/web/static
+		file_server
+	}
+
+	@playtime_public {
+		host playtime.localhost
+		path /ShowTournament/*
+	}
+	handle @playtime_public {
+		uri strip_prefix /ShowTournament
+		root * ../playtime/public
+		file_server
+	}
+
+	@playtime_static {
+		host playtime.localhost
+		path /static/*
+	}
+	handle @playtime_static {
+		uri strip_prefix /static
+		root * ../playtime/src/web/static
+		file_server
+	}
+
+	# Playtime application
+	@playtime host playtime.localhost
+	handle @playtime {
+		reverse_proxy localhost:1612
+	}
+
+	# The loopback origin exists only for server-to-hub publication.
+	handle {
+		respond "Not Found" 404
+	}
+}

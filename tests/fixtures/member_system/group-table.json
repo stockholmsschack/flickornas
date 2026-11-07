@@ -1,0 +1,18 @@
+[
+  {
+    "contenderId": 123,
+    "playerInfo": {
+      "clubId": 10,
+      "club": "Stockholms SK",
+      "firstName": "Ada",
+      "lastName": "Lovelace",
+      "sex": "F",
+      "birthdate": "2015"
+    },
+    "points": 4,
+    "secPoints": 8,
+    "wonGames": 2,
+    "drawGames": 0,
+    "lostGames": 1
+  }
+]

@@ -1,0 +1,90 @@
+{% extends "flickornas/base.jinja2" %}
+{% from "flickornas/_file_table.jinja2" import file_table %}
+
+{% block title %}{{ t("available_files.title") }} · {{ t("app.name") }}{% endblock %}
+
+{% block content %}
+    <div
+        data-available-files
+        data-clear-endpoint="{{ url_for('flickornas.clear_available_files') }}"
+    >
+        <h1>{{ t("available_files.title") }}</h1>
+
+        <div
+            class="alert d-none"
+            role="status"
+            tabindex="-1"
+            data-clear-outcome
+        ></div>
+
+        {% if available_files %}
+        <div data-file-list>
+            {{ file_table(available_files, t) }}
+
+            <button
+                type="button"
+                class="btn btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#clear-downloads-dialog"
+                data-clear-open
+            >
+                {{ t("available_files.clear.open") }}
+            </button>
+        </div>
+        {% endif %}
+
+        <div
+            class="alert alert-light border{% if available_files %} d-none{% endif %}"
+            role="status"
+            data-file-empty
+        >{{ t("available_files.empty") }}</div>
+
+        {% if available_files %}
+        <div
+            class="modal"
+            id="clear-downloads-dialog"
+            tabindex="-1"
+            aria-labelledby="clear-downloads-heading"
+            aria-describedby="clear-downloads-description"
+            data-clear-dialog
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="clear-downloads-heading">
+                            {{ t("available_files.clear.heading") }}
+                        </h2>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="{{ t('available_files.clear.cancel') }}"
+                        ></button>
+                    </div>
+                    <div class="modal-body" id="clear-downloads-description">
+                        {{ t("available_files.clear.confirmation") }}
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >{{ t("available_files.clear.cancel") }}</button>
+                        <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-clear-confirm
+                            data-idle-label="{{ t('available_files.clear.confirm') }}"
+                            data-busy-label="{{ t('available_files.clear.clearing') }}"
+                        >{{ t("available_files.clear.confirm") }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="module" src="{{ url_for('flickornas.static', filename='js/available-files.js') }}"></script>
+{% endblock %}

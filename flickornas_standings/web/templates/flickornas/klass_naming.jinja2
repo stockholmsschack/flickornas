@@ -1,0 +1,42 @@
+{% extends 'flickornas/base.jinja2' %}
+{% block title %}{{ t('klass_naming.title') }}{% endblock %}
+{% block content %}
+<h1>{{ t('klass_naming.title') }}</h1>
+<p>{{ t('klass_naming.intro') }}</p>
+{% for section, rows in [
+    ('letters', [('Klass A', 'A'), ('Klass E Elit', 'E'), ('Flickornas Klass C', 'C'),
+        ('Klass A/B', 'A/B'), ('Klass A B', 'A/B'), ('grupp B', 'B')]),
+    ('descriptions', [('Nybörjare', 'Nybörjare (z)'), ('Klass E Nybörjare', 'Nybörjare (z)'),
+        ('Allmänna Klass B', 'Allmän (y)'), ('Öppen klass', 'Öppen (y)'),
+        ('Minior', 'Minior (r)'), ('Miniorklass A', 'Minior (r)'), ('MINIOR KLASS A', 'Minior (r)'),
+        ('Kadetter', 'Kadett (q)'), ('Junior', 'Junior (p)')])
+] %}
+<section class="mb-4">
+    <h2 class="h4">{{ t('klass_naming.' ~ section) }}</h2>
+    <p>{{ t('klass_naming.' ~ section ~ '_text') }}</p>
+    <table class="table table-striped">
+        <thead><tr><th>{{ t('klass_naming.group_name') }}</th><th>{{ t('klass_naming.reads_as') }}</th></tr></thead>
+        <tbody>{% for name, klass in rows %}<tr><td><code>{{ name }}</code></td><td>{{ klass }}</td></tr>{% endfor %}</tbody>
+    </table>
+    {% if section == 'descriptions' %}<p>{{ t('klass_naming.case_exception') }}</p>{% endif %}
+</section>
+{% endfor %}
+<h2 class="h4">{{ t('klass_naming.fixes') }}</h2>
+<p>{{ t('klass_naming.fixes_text') }}</p>
+<table class="table table-striped">
+    <thead><tr><th>{{ t('klass_naming.refused') }}</th><th>{{ t('klass_naming.write_instead') }}</th></tr></thead>
+    <tbody>
+        {% for bad, replacement in [('Klass a', 'Klass A'), ('KLASS A', 'Klass A'),
+            ('Klass A1', 'Klass A 1'), ('Klass B/A', 'Klass A/B'),
+            ('Klass A Minior', 'Minior'), ('Klass Minior', 'Minior'),
+            ('Minior Junior', 'Minior'), ('Minior Nybörjare', 'Nybörjare')] %}
+            <tr><td><code>{{ bad }}</code></td><td><code>{{ replacement }}</code></td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h2 class="h4">{{ t('klass_naming.finals') }}</h2>
+<p>{{ t('klass_naming.finals_text') }}</p>
+<h2 class="h4">{{ t('klass_naming.points') }}</h2>
+<p>{{ t('klass_naming.points_text') }}</p>
+<p>{{ t('klass_naming.retry') }}</p>
+{% endblock %}

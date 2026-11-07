@@ -1,0 +1,34 @@
+{% macro file_table(files, t) %}
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">{{ t("available_files.file") }}</th>
+                    <th scope="col">{{ t("available_files.generated") }}</th>
+                    <th scope="col">
+                        <span class="visually-hidden">{{ t("available_files.action") }}</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in files %}
+                    <tr>
+                        <td>
+                            {{ t(file.label_key) }}{% if file.partial %}{{ t("available_files.partial_suffix") }}{% endif %}
+                        </td>
+                        <td>
+                            <time datetime="{{ file.generated_at.isoformat() }}">
+                                {{ file.generated_at.strftime("%Y-%m-%d %H:%M:%S") }}
+                            </time>
+                        </td>
+                        <td class="text-end">
+                            <a class="btn btn-primary btn-sm" href="{{ file.download_url }}">
+                                {{ t("available_files.download") }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}

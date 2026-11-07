@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="{{ locale }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ t("app.name") }}{% endblock %}</title>
+    <link href="{{ url_for('flickornas.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('flickornas.landing', lang=locale) }}">
+            {{ t("app.name") }}
+        </a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#primary-navigation"
+            aria-controls="primary-navigation"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="primary-navigation">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link{% if request.endpoint == 'flickornas.landing' %} active{% endif %}"
+                       href="{{ url_for('flickornas.landing', lang=locale) }}">
+                        {{ t("nav.home") }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if request.endpoint == 'flickornas.configuration' %} active{% endif %}"
+                       href="{{ url_for('flickornas.configuration', lang=locale) }}">
+                        {{ t("nav.configuration") }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if request.endpoint == 'flickornas.available_files' %} active{% endif %}"
+                       href="{{ url_for('flickornas.available_files', lang=locale) }}">
+                        {{ t("nav.available_files") }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if request.endpoint == 'flickornas.reports' %} active{% endif %}"
+                       href="{{ url_for('flickornas.reports', lang=locale) }}">
+                        {{ t("nav.reports") }}
+                    </a>
+                </li>
+            </ul>
+            {#- Names and flags the other language, so its readers can find it. -#}
+            {% set other = locales|reject("equalto", locale)|first %}
+            <form method="get" action="{{ request.path }}">
+                <input type="hidden" name="lang" value="{{ other }}">
+                <button
+                    class="btn btn-outline-light btn-sm d-inline-flex align-items-center gap-2"
+                    type="submit"
+                    id="locale-choice"
+                    lang="{{ other }}"
+                    title="{{ t('locale.' ~ other) }}"
+                >
+                    <img src="{{ url_for('flickornas.static', filename='images/flags/' ~ {'sv': 'se', 'en': 'gb'}[other] ~ '.svg') }}" height="12" alt="">{{ other|upper }}
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container my-4">
+    {% block content %}{% endblock %}
+</main>
+
+<script src="{{ url_for('flickornas.static', filename='js/bootstrap.bundle.min.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

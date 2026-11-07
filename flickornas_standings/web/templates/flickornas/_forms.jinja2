@@ -1,0 +1,29 @@
+{% macro render_field(name, label, value="", type="text", help_text=none, required=false) %}
+    <div class="mb-3">
+        <label class="form-label" for="{{ name }}">{{ label }}</label>
+        <input
+            class="form-control"
+            id="{{ name }}"
+            name="{{ name }}"
+            type="{{ type }}"
+            value="{{ value }}"
+            {% if required %}required{% endif %}
+        >
+        {% if help_text %}
+            <div class="form-text">{{ help_text }}</div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_select(name, label, options, selected=none) %}
+    <div class="mb-3">
+        <label class="form-label" for="{{ name }}">{{ label }}</label>
+        <select class="form-select" id="{{ name }}" name="{{ name }}">
+            {% for value, option_label in options %}
+                <option value="{{ value }}"{% if value == selected %} selected{% endif %}>
+                    {{ option_label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}

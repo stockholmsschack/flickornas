@@ -1,0 +1,18 @@
+{
+  "id": 6444,
+  "name": "Övrig testturnering",
+  "start": "2026-02-01",
+  "end": "2026-02-02",
+  "rootClasses": [
+    {
+      "groups": [
+        {
+          "id": 7100,
+          "name": "Final",
+          "nrofrounds": 5,
+          "pointSystem": "3-2-1"
+        }
+      ]
+    }
+  ]
+}

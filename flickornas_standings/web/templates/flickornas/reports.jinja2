@@ -1,0 +1,16 @@
+{% extends "flickornas/base.jinja2" %}
+{% from "flickornas/_file_table.jinja2" import file_table %}
+
+{% block title %}{{ t("reports.title") }} · {{ t("app.name") }}{% endblock %}
+
+{% block content %}
+    <h1>{{ t("reports.title") }}</h1>
+
+    {% if report_files %}
+        {{ file_table(report_files, t) }}
+    {% else %}
+        <div class="alert alert-light border" role="status">
+            {{ t("reports.empty") }}
+        </div>
+    {% endif %}
+{% endblock %}

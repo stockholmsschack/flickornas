@@ -1,0 +1,22 @@
+revision = 54
+tournament_ids = [6336, 6544, 6540, 6534, 6685, 6826, 6853, 6987, 7106, 7057]
+finals_separators = []
+
+[contributor]
+name = "Ganesh Srinivasson"
+email = "bganesh@gmail.com"
+
+[known_local_players]
+
+[known_local_player_names]
+
+[layout]
+landscape_starts_at = 15
+base_side_margin_cm = 0.8
+margin_reduction_starts_after = 7
+margin_reduction_per_tournament_cm = 0.05
+minimum_side_margin_cm = 0.5
+
+[club_display_names]
+"Kista SC KFUM Schacksektion" = "Kista SC KFUM"
+"SK Rockaden Sthlm" = "SK Rockaden"

@@ -1,0 +1,1165 @@
+{% from 'flickornas/_klass_problems.jinja2' import naming_problems with context %}
+{% extends "flickornas/base.jinja2" %}
+
+{% block title %}{{ t("configuration.title") }} · {{ t("app.name") }}{% endblock %}
+
+{% block content %}
+    <h1>{{ t("configuration.title") }}</h1>
+    {% if configuration_problems %}
+        <div class="alert alert-danger" role="alert">
+            <p class="mb-2">{{ t("configuration.invalid") }}</p>
+            <ul class="mb-0">
+                {% for problem in configuration_problems %}
+                    <li>{{ problem }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% elif configuration %}
+        <dl class="row" data-configuration-summary>
+            <dt class="col-sm-4">
+                <a
+                    class="link-body-emphasis link-underline-opacity-25 link-underline-opacity-75-hover"
+                    href="#tournament-addition-panel"
+                    data-configuration-tab-link="tournament-addition-tab"
+                >{{ t("configuration.tournaments") }}</a>
+            </dt>
+            <dd class="col-sm-8">{{ configuration.default_tournament_ids | join(", ") }}</dd>
+
+            <dt class="col-sm-4">
+                <a
+                    class="link-body-emphasis link-underline-opacity-25 link-underline-opacity-75-hover"
+                    href="#contributor-panel"
+                    data-configuration-tab-link="contributor-tab"
+                >{{ t("configuration.contributor") }}</a>
+            </dt>
+            <dd class="col-sm-8" data-configuration-contributor-summary>
+                {{ configuration.contributor.name }}
+                &lt;{{ configuration.contributor.email }}&gt;
+            </dd>
+
+            <dt class="col-sm-4">
+                <a
+                    class="link-body-emphasis link-underline-opacity-25 link-underline-opacity-75-hover"
+                    href="#player-addition-panel"
+                    data-configuration-tab-link="player-addition-tab"
+                >{{ t("configuration.known_players") }}</a>
+            </dt>
+            <dd class="col-sm-8" data-configuration-known-player-count>
+                {{ configuration.known_local_players | length
+                   if configuration.known_local_players
+                   else t("configuration.none") }}
+            </dd>
+
+            <dt class="col-sm-4">
+                <a
+                    class="link-body-emphasis link-underline-opacity-25 link-underline-opacity-75-hover"
+                    href="#club-display-names-panel"
+                    data-configuration-tab-link="club-display-names-tab"
+                >{{ t("configuration.club_aliases") }}</a>
+            </dt>
+            <dd class="col-sm-8" data-configuration-club-alias-count>
+                {{ configuration.club_display_names | length
+                   if configuration.club_display_names
+                   else t("configuration.none") }}
+            </dd>
+
+            <dt class="col-sm-4">
+                <a
+                    class="link-body-emphasis link-underline-opacity-25 link-underline-opacity-75-hover"
+                    href="#finals-panel"
+                    data-configuration-tab-link="finals-tab"
+                >{{ t("finals.title") }}</a>
+            </dt>
+            <dd class="col-sm-8" data-configuration-finals-summary>
+                {{ configuration.finals_separators | join(", ")
+                   if configuration.finals_separators
+                   else t("configuration.none") }}
+            </dd>
+
+            <dt class="col-sm-4">
+                <a
+                    class="link-body-emphasis link-underline-opacity-25 link-underline-opacity-75-hover"
+                    href="#rules-file-panel"
+                    data-configuration-tab-link="rules-file-tab"
+                >{{ t("rules_file.title") }}</a>
+            </dt>
+            <dd class="col-sm-8">rules.typ</dd>
+        </dl>
+
+        {% if tournament_year_state %}
+            {% if tournament_year_state.value == "stale" %}
+                <div
+                    class="alert alert-warning"
+                    role="status"
+                    data-calendar-rollover
+                    data-start-endpoint="{{ url_for('flickornas.start_tournament_rollover') }}"
+                    data-cancel-endpoint="{{ url_for('flickornas.cancel_tournament_rollover') }}"
+                    data-configuration-revision="{{ configuration.revision }}"
+                >
+                    {% if rollover_active %}
+                        <p>{{ t("configuration.rollover.active", year=current_year) }}</p>
+                        <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            data-cancel-calendar-rollover
+                        >
+                            {{ t("configuration.rollover.cancel") }}
+                        </button>
+                    {% else %}
+                        <p>{{ t("configuration.rollover.stale", year=current_year) }}</p>
+                        <button
+                            class="btn btn-warning"
+                            type="button"
+                            data-start-calendar-rollover
+                        >
+                            {{ t("configuration.rollover.start", year=current_year) }}
+                        </button>
+                    {% endif %}
+                    <div
+                        class="mt-2"
+                        role="alert"
+                        data-calendar-rollover-status
+                    ></div>
+                </div>
+            {% elif tournament_year_state.value == "mixed" %}
+                <div class="alert alert-danger" role="alert">
+                    {{ t("configuration.tournament_years.mixed") }}
+                </div>
+            {% elif tournament_year_state.value == "future" %}
+                <div class="alert alert-danger" role="alert">
+                    {{ t("configuration.tournament_years.future", year=current_year) }}
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    <div class="my-4">
+        <button
+            class="btn btn-success"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#generation-form-dialog"
+            data-generation-open
+            data-rollover-active="{{ 'true' if rollover_active else 'false' }}"
+            data-has-selected-tournaments="{{ 'true' if selected_tournaments else 'false' }}"
+            {% if not configuration or not selected_tournaments %}disabled{% endif %}
+        >
+            {{ t("generation.open") }}
+        </button>
+    </div>
+
+    <div
+        class="modal"
+        id="generation-form-dialog"
+        tabindex="-1"
+        aria-labelledby="generation-form-heading"
+        data-generation-form
+        data-configuration-revision="{{ configuration.revision if configuration else 0 }}"
+        data-defaults-endpoint="{{ url_for('flickornas.generation_defaults') }}"
+        data-start-endpoint="{{ url_for('flickornas.start_generation_operation') }}"
+        data-mercure-hub="{{ flickornas_mercure_hub }}"
+    >
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="generation-form-heading">
+                        {{ t("generation.title") }}
+                    </h2>
+                    <button
+                        class="btn-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="{{ t('generation.close') }}"
+                    ></button>
+                </div>
+                <form data-generation-input-form>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="generation-year">
+                                    {{ t("generation.year") }}
+                                </label>
+                                <input
+                                    class="form-control"
+                                    id="generation-year"
+                                    type="number"
+                                    min="1900"
+                                    max="9999"
+                                    value="{{ current_year }}"
+                                    required
+                                    data-generation-year
+                                    {% if not can_select_generation_tournaments %}
+                                        readonly
+                                        aria-readonly="true"
+                                    {% endif %}
+                                >
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="generation-layout">
+                                    {{ t("generation.layout") }}
+                                </label>
+                                <select
+                                    class="form-select"
+                                    id="generation-layout"
+                                    data-generation-layout
+                                >
+                                    <option value="auto">{{ t("generation.layout.auto") }}</option>
+                                    <option value="portrait">{{ t("generation.layout.portrait") }}</option>
+                                    <option value="landscape">{{ t("generation.layout.landscape") }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        {% if can_select_generation_tournaments %}
+                        <div class="form-check form-switch my-4">
+                            <input
+                                class="form-check-input"
+                                id="generation-explicit-tournaments"
+                                type="checkbox"
+                                role="switch"
+                                data-generation-explicit-tournaments
+                            >
+                            <label
+                                class="form-check-label"
+                                for="generation-explicit-tournaments"
+                            >
+                                {{ t("generation.replace_tournaments") }}
+                            </label>
+                        </div>
+                        <div class="alert alert-secondary" data-generation-defaults-status>
+                            {{ t("generation.loading_defaults") }}
+                        </div>
+                        <div
+                            class="d-none"
+                            data-generation-tournament-picker
+                        >
+                            <div
+                                data-tournament-search
+                                data-tournament-manual-mount
+                                data-tournament-consumer="run"
+                                data-search-endpoint="{{ url_for('flickornas.tournament_search') }}"
+                                data-lookup-endpoint-template="{{ url_for(
+                                    'flickornas.canonical_tournament',
+                                    tournament_id='__tournament_id__'
+                                ) }}"
+                            >
+                                <section
+                                    class="mb-4"
+                                    aria-labelledby="generation-selected-tournaments-heading"
+                                >
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h3
+                                            class="h6 mb-0"
+                                            id="generation-selected-tournaments-heading"
+                                        >
+                                            {{ t("tournament_selection.selected_heading") }}
+                                        </h3>
+                                        <button
+                                            class="btn btn-outline-danger btn-sm"
+                                            type="button"
+                                            data-remove-all-tournaments
+                                            disabled
+                                        >
+                                            {{ t("tournament_selection.remove_all") }}
+                                        </button>
+                                    </div>
+                                    <div data-selected-tournaments></div>
+                                </section>
+                                <hr>
+                                <label class="form-label" for="generation-tournament-search">
+                                    {{ t("tournament_search.label") }}
+                                </label>
+                                <input
+                                    class="form-control"
+                                    id="generation-tournament-search"
+                                    type="search"
+                                    autocomplete="off"
+                                    placeholder="{{ t('tournament_search.placeholder') }}"
+                                    data-tournament-search-input
+                                >
+                                <div
+                                    class="form-text tournament-search-status"
+                                    role="status"
+                                    aria-live="polite"
+                                    data-search-state="idle"
+                                    data-tournament-search-status
+                                ></div>
+                                <ul
+                                    class="list-group mt-3"
+                                    aria-label="{{ t('tournament_search.results_label') }}"
+                                    data-tournament-search-results
+                                ></ul>
+                                <div
+                                    class="row g-2 align-items-end mt-3"
+                                    data-tournament-id-form
+                                >
+                                    <div class="col-sm">
+                                        <label class="form-label" for="generation-tournament-id">
+                                            {{ t("tournament_selection.paste_label") }}
+                                        </label>
+                                        <input
+                                            class="form-control"
+                                            id="generation-tournament-id"
+                                            type="text"
+                                            inputmode="numeric"
+                                            autocomplete="off"
+                                            data-tournament-id-input
+                                        >
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <button
+                                            class="btn btn-outline-secondary"
+                                            type="button"
+                                            data-verify-tournament-id
+                                        >
+                                            {{ t("tournament_selection.verify") }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div
+                                    role="status"
+                                    aria-live="polite"
+                                    data-tournament-selection
+                                ></div>
+                                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                                    <div
+                                        class="toast border-0"
+                                        role="status"
+                                        aria-live="polite"
+                                        aria-atomic="true"
+                                        data-tournament-selection-toast
+                                    >
+                                        <div class="d-flex">
+                                            <div class="toast-body" data-tournament-selection-toast-message></div>
+                                            <button
+                                                class="btn-close btn-close-white me-2 m-auto"
+                                                type="button"
+                                                data-bs-dismiss="toast"
+                                                aria-label="{{ t('tournament_selection.dismiss_notification') }}"
+                                            ></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="modal"
+                                    tabindex="-1"
+                                    aria-labelledby="generation-tournament-removal-heading"
+                                    aria-describedby="generation-tournament-removal-description"
+                                    data-tournament-removal-dialog
+                                >
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h3
+                                                    class="modal-title fs-5"
+                                                    id="generation-tournament-removal-heading"
+                                                    data-tournament-removal-heading
+                                                >
+                                                    {{ t("tournament_selection.remove_heading") }}
+                                                </h3>
+                                                <button
+                                                    class="btn-close"
+                                                    type="button"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="{{ t('tournament_selection.cancel') }}"
+                                                ></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p
+                                                    id="generation-tournament-removal-description"
+                                                    data-tournament-removal-description
+                                                >
+                                                    {{ t("tournament_selection.remove_confirmation") }}
+                                                </p>
+                                                <p class="fw-semibold mb-0" data-tournament-removal-name></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button
+                                                    class="btn btn-secondary"
+                                                    type="button"
+                                                    data-bs-dismiss="modal"
+                                                >
+                                                    {{ t("tournament_selection.cancel") }}
+                                                </button>
+                                                <button
+                                                    class="btn btn-danger"
+                                                    type="button"
+                                                    data-confirm-tournament-removal
+                                                >
+                                                    {{ t("tournament_selection.remove") }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div
+                            class="mt-3"
+                            data-generation-status
+                        ></div>
+                        <div
+                            class="visually-hidden"
+                            role="status"
+                            aria-live="polite"
+                            aria-atomic="true"
+                            data-generation-announcement
+                        ></div>
+                    </div>
+                    <div class="modal-footer generation-modal-actions">
+                        <button
+                            class="btn btn-secondary generation-modal-cancel"
+                            type="button"
+                            data-bs-dismiss="modal"
+                        >
+                            {{ t("generation.close") }}
+                        </button>
+                        <span
+                            class="form-text generation-modal-hint"
+                            role="status"
+                            aria-live="polite"
+                            data-generation-submit-hint
+                        ></span>
+                        <button
+                            class="btn btn-primary generation-modal-primary"
+                            type="submit"
+                            disabled
+                            data-start-generation
+                        >
+                            {{ t("generation.start") }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <p class="mt-4">
+        <a href="{{ url_for('flickornas.klass_naming_help', lang=locale) }}">{{ t('klass_naming.help_link') }}</a>
+    </p>
+    <div
+        class="mt-4"
+        data-tournament-search
+        data-search-endpoint="{{ url_for('flickornas.tournament_search') }}"
+        data-lookup-endpoint-template="{{ url_for(
+            'flickornas.canonical_tournament',
+            tournament_id='__tournament_id__'
+        ) }}"
+        data-save-endpoint="{{ url_for('flickornas.save_default_tournaments') }}"
+        data-configuration-revision="{{ configuration.revision if configuration else 0 }}"
+    >
+        {% if selection_problem %}
+            <div class="alert alert-danger" role="alert">
+                <div class="fw-semibold">{{ t(selection_problem) }}</div>
+                {{ naming_problems(selection_klass_problems) }}
+            </div>
+        {% endif %}
+        <section
+            class="mb-4"
+            aria-labelledby="selected-tournaments-heading"
+        >
+            <h2 class="h5 mb-2" id="selected-tournaments-heading">
+                {{ t("tournament_selection.selected_heading") }}
+            </h2>
+            <div
+                data-selected-count="0"
+                data-selected-tournaments
+            ></div>
+            <div
+                class="mt-3"
+                role="status"
+                aria-live="polite"
+                data-save-state="idle"
+                data-tournament-save-status
+            ></div>
+        </section>
+
+        <div class="card">
+            <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link active"
+                        id="tournament-addition-tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tournament-addition-panel"
+                        aria-controls="tournament-addition-panel"
+                        aria-selected="true"
+                    >
+                        {{ t("configuration.tournaments") }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        id="player-addition-tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#player-addition-panel"
+                        aria-controls="player-addition-panel"
+                        aria-selected="false"
+                    >
+                        {{ t("player_overrides.title") }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        id="contributor-tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#contributor-panel"
+                        aria-controls="contributor-panel"
+                        aria-selected="false"
+                    >
+                        {{ t("contributor.title") }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        id="club-display-names-tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#club-display-names-panel"
+                        aria-controls="club-display-names-panel"
+                        aria-selected="false"
+                    >
+                        {{ t("club_display_names.title") }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        id="finals-tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#finals-panel"
+                        aria-controls="finals-panel"
+                        aria-selected="false"
+                    >
+                        {{ t("finals.title") }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        id="rules-file-tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#rules-file-panel"
+                        aria-controls="rules-file-panel"
+                        aria-selected="false"
+                    >
+                        {{ t("rules_file.title") }}
+                    </button>
+                </li>
+            </ul>
+            </div>
+            <div class="tab-content">
+            <section
+                class="tab-pane active card-body"
+                id="tournament-addition-panel"
+                role="tabpanel"
+                aria-labelledby="tournament-addition-tab"
+                tabindex="0"
+            >
+                <label class="form-label" for="tournament-search">
+                    {{ t("tournament_search.label") }}
+                </label>
+                <input
+                    class="form-control"
+                    id="tournament-search"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="{{ t('tournament_search.placeholder') }}"
+                    data-tournament-search-input
+                >
+                <div
+                    class="form-text tournament-search-status"
+                    role="status"
+                    aria-live="polite"
+                    data-search-state="idle"
+                    data-tournament-search-status
+                >{{ t("tournament_search.idle") }}</div>
+                <ul
+                    class="list-group mt-3"
+                    aria-label="{{ t('tournament_search.results_label') }}"
+                    data-tournament-search-results
+                ></ul>
+                <form
+                    class="row g-2 align-items-end mt-3"
+                    data-tournament-id-form
+                >
+                    <div class="col-sm">
+                        <label class="form-label" for="tournament-id">
+                            {{ t("tournament_selection.paste_label") }}
+                        </label>
+                        <input
+                            class="form-control"
+                            id="tournament-id"
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            data-tournament-id-input
+                        >
+                    </div>
+                    <div class="col-sm-auto">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            {{ t("tournament_selection.verify") }}
+                        </button>
+                    </div>
+                </form>
+                <div
+                    class="form-text mt-3"
+                    role="status"
+                    aria-live="polite"
+                    data-selection-state="idle"
+                    data-tournament-selection
+                ></div>
+                <div
+                    class="toast-container position-fixed bottom-0 end-0 p-3"
+                >
+                    <div
+                        class="toast border-0"
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                        data-tournament-selection-toast
+                    >
+                        <div class="d-flex">
+                            <div
+                                class="toast-body"
+                                data-tournament-selection-toast-message
+                            ></div>
+                            <button
+                                class="btn-close btn-close-white me-2 m-auto"
+                                type="button"
+                                data-bs-dismiss="toast"
+                                aria-label="{{ t('tournament_selection.dismiss_notification') }}"
+                            ></button>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="modal"
+                    tabindex="-1"
+                    aria-labelledby="tournament-removal-heading"
+                    aria-describedby="tournament-removal-description"
+                    data-tournament-removal-dialog
+                >
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2
+                                    class="modal-title fs-5"
+                                    id="tournament-removal-heading"
+                                    data-tournament-removal-heading
+                                >
+                                    {{ t("tournament_selection.remove_heading") }}
+                                </h2>
+                                <button
+                                    class="btn-close"
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                    aria-label="{{ t('tournament_selection.cancel') }}"
+                                ></button>
+                            </div>
+                            <div class="modal-body">
+                                <p
+                                    id="tournament-removal-description"
+                                    data-tournament-removal-description
+                                >
+                                    {{ t("tournament_selection.remove_confirmation") }}
+                                </p>
+                                <p
+                                    class="fw-semibold mb-0"
+                                    data-tournament-removal-name
+                                ></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    class="btn btn-secondary"
+                                    type="button"
+                                    data-bs-dismiss="modal"
+                                >
+                                    {{ t("tournament_selection.cancel") }}
+                                </button>
+                                <button
+                                    class="btn btn-danger"
+                                    type="button"
+                                    data-confirm-tournament-removal
+                                >
+                                    {{ t("tournament_selection.remove") }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section
+                class="tab-pane card-body"
+                id="player-addition-panel"
+                role="tabpanel"
+                aria-labelledby="player-addition-tab"
+                tabindex="0"
+                data-player-override-editor
+                data-save-endpoint="{{ url_for('flickornas.save_player_overrides') }}"
+                data-configuration-revision="{{ configuration.revision if configuration else 0 }}"
+            >
+            <div class="d-flex justify-content-between align-items-center gap-3">
+                <h2 class="h5 mb-0">{{ t("player_overrides.current") }}</h2>
+                <button
+                    class="btn btn-outline-danger btn-sm"
+                    type="button"
+                    data-remove-all-player-overrides
+                    disabled
+                >
+                    {{ t("player_overrides.remove_all") }}
+                </button>
+            </div>
+            <div
+                class="mt-3"
+                data-player-overrides
+                data-override-count="0"
+            ></div>
+            <hr>
+            <h2 class="h5">{{ t("player_overrides.add_heading") }}</h2>
+            <div class="row g-4">
+                <section
+                    class="col-lg-6"
+                    aria-labelledby="player-search-heading"
+                >
+                    <h3 class="h6" id="player-search-heading">
+                        {{ t("player_search.title") }}
+                    </h3>
+                    <div
+                        data-player-name-selector
+                        data-search-endpoint="{{ url_for('flickornas.player_search') }}"
+                    ></div>
+                </section>
+                <section
+                    class="col-lg-6"
+                    aria-labelledby="club-search-heading"
+                >
+                    <h3 class="h6" id="club-search-heading">
+                        {{ t("club_search.title") }}
+                    </h3>
+                    <div
+                        data-club-selector
+                        data-clubs-endpoint="{{ url_for('flickornas.district_clubs') }}"
+                    ></div>
+                </section>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    data-save-player-override
+                    disabled
+                >
+                    {{ t("player_overrides.save") }}
+                </button>
+            </div>
+            <div
+                class="mt-3"
+                role="status"
+                aria-live="polite"
+                data-save-state="idle"
+                data-player-override-save-status
+            ></div>
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div
+                    class="toast border-0"
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    data-player-override-toast
+                >
+                    <div class="d-flex">
+                        <div
+                            class="toast-body"
+                            data-player-override-toast-message
+                        ></div>
+                        <button
+                            class="btn-close btn-close-white me-2 m-auto"
+                            type="button"
+                            data-bs-dismiss="toast"
+                            aria-label="{{ t('player_overrides.dismiss_notification') }}"
+                        ></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="modal"
+                tabindex="-1"
+                aria-labelledby="player-override-removal-heading"
+                aria-describedby="player-override-removal-description"
+                data-player-override-removal-dialog
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2
+                                class="modal-title fs-5"
+                                id="player-override-removal-heading"
+                                data-player-override-removal-heading
+                            >
+                                {{ t("player_overrides.remove_heading") }}
+                            </h2>
+                            <button
+                                class="btn-close"
+                                type="button"
+                                data-bs-dismiss="modal"
+                                aria-label="{{ t('player_overrides.cancel') }}"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <p
+                                id="player-override-removal-description"
+                                data-player-override-removal-description
+                            >
+                                {{ t("player_overrides.remove_confirmation") }}
+                            </p>
+                            <p
+                                class="fw-semibold mb-0"
+                                data-player-override-removal-names
+                            ></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                class="btn btn-secondary"
+                                type="button"
+                                data-bs-dismiss="modal"
+                            >
+                                {{ t("player_overrides.cancel") }}
+                            </button>
+                            <button
+                                class="btn btn-danger"
+                                type="button"
+                                data-confirm-player-override-removal
+                            >
+                                {{ t("player_overrides.remove") }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </section>
+            <section
+                class="tab-pane card-body"
+                id="contributor-panel"
+                role="tabpanel"
+                aria-labelledby="contributor-tab"
+                tabindex="0"
+                data-contributor-editor
+                data-save-endpoint="{{ url_for('flickornas.save_contributor') }}"
+                data-configuration-revision="{{ configuration.revision if configuration else 0 }}"
+                data-default-name="{{ default_contributor_name }}"
+                data-default-email="{{ default_contributor_email }}"
+            >
+                <form data-contributor-form novalidate>
+                    <div class="mb-3">
+                        <label class="form-label" for="contributor-name">
+                            {{ t("contributor.name") }}
+                        </label>
+                        <div class="input-group">
+                            <input
+                                class="form-control"
+                                id="contributor-name"
+                                name="name"
+                                type="text"
+                                maxlength="200"
+                                value="{{ configuration.contributor.name if configuration else '' }}"
+                                placeholder="{{ default_contributor_name }}"
+                                autocomplete="organization"
+                                data-contributor-name
+                            >
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                aria-label="{{ t('contributor.clear_name') }}"
+                                data-clear-contributor-name
+                                {% if not configuration or not configuration.contributor.name %}disabled{% endif %}
+                            >
+                                {{ t("contributor.clear") }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="contributor-email">
+                            {{ t("contributor.email") }}
+                        </label>
+                        <div class="input-group">
+                            <input
+                                class="form-control"
+                                id="contributor-email"
+                                name="email"
+                                type="email"
+                                pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                                maxlength="320"
+                                value="{{ configuration.contributor.email if configuration else '' }}"
+                                placeholder="{{ default_contributor_email }}"
+                                autocomplete="email"
+                                data-contributor-email
+                            >
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                aria-label="{{ t('contributor.clear_email') }}"
+                                data-clear-contributor-email
+                                {% if not configuration or not configuration.contributor.email %}disabled{% endif %}
+                            >
+                                {{ t("contributor.clear") }}
+                            </button>
+                            <div class="invalid-feedback">
+                                {{ t("contributor.invalid_email") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            disabled
+                            data-save-contributor
+                        >
+                            {{ t("contributor.save") }}
+                        </button>
+                    </div>
+                    <div
+                        class="form-text"
+                        role="status"
+                        aria-live="polite"
+                        data-contributor-save-status
+                    >{{ t("contributor.unchanged") }}</div>
+                </form>
+            </section>
+            <section
+                class="tab-pane card-body"
+                id="club-display-names-panel"
+                role="tabpanel"
+                aria-labelledby="club-display-names-tab"
+                tabindex="0"
+                data-club-display-name-editor
+                data-save-endpoint="{{ url_for('flickornas.save_club_display_name') }}"
+                data-clubs-endpoint="{{ url_for('flickornas.district_clubs') }}"
+                data-configuration-revision="{{ configuration.revision if configuration else 0 }}"
+            >
+                <h2 class="h5">{{ t("club_display_names.add_heading") }}</h2>
+                <div class="row g-3 align-items-start">
+                    <div class="col-lg-6">
+                        <div data-club-display-name-selector></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <label
+                            class="form-label"
+                            for="new-club-display-name"
+                        >
+                            {{ t("club_display_names.short_name") }}
+                        </label>
+                        <input
+                            class="form-control"
+                            id="new-club-display-name"
+                            type="text"
+                            maxlength="200"
+                            autocomplete="off"
+                            data-new-club-display-name
+                        >
+                    </div>
+                    <div class="col-lg-2 align-self-end">
+                        <button
+                            class="btn btn-primary w-100"
+                            type="button"
+                            disabled
+                            data-add-club-display-name
+                        >
+                            {{ t("club_display_names.add") }}
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="form-text mt-2"
+                    role="status"
+                    aria-live="polite"
+                    data-club-display-name-status
+                ></div>
+                <hr>
+                <h2 class="h5">{{ t("club_display_names.current") }}</h2>
+                <div data-club-display-name-list></div>
+                <div
+                    class="form-text"
+                    role="status"
+                    aria-live="polite"
+                    data-club-display-name-list-status
+                ></div>
+            </section>
+            <section
+                class="tab-pane card-body"
+                id="finals-panel"
+                role="tabpanel"
+                aria-labelledby="finals-tab"
+                tabindex="0"
+                data-finals-editor
+                data-save-endpoint="{{ url_for('flickornas.save_finals_separators') }}"
+                data-configuration-revision="{{ configuration.revision if configuration else 0 }}"
+            >
+                <p>{{ t("finals.description") }}</p>
+                <form data-finals-form novalidate>
+                    <div class="vstack gap-2 mb-3" data-finals-separator-list></div>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex gap-2">
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                data-add-finals-separator
+                            >
+                                {{ t("finals.add") }}
+                            </button>
+                            <button
+                                class="btn btn-outline-danger"
+                                type="button"
+                                data-clear-all-finals-separators
+                            >
+                                {{ t("finals.clear_all") }}
+                            </button>
+                        </div>
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            disabled
+                            data-save-finals
+                        >
+                            {{ t("finals.save") }}
+                        </button>
+                    </div>
+                    <div
+                        class="form-text"
+                        role="status"
+                        aria-live="polite"
+                        data-finals-save-status
+                    >{{ t("finals.unchanged") }}</div>
+                </form>
+            </section>
+            <section
+                class="tab-pane card-body"
+                id="rules-file-panel"
+                role="tabpanel"
+                aria-labelledby="rules-file-tab"
+                tabindex="0"
+                data-rules-file-editor
+                data-upload-endpoint="{{ url_for('flickornas.upload_rules_file') }}"
+                data-has-custom-rules="{{ 'true' if has_custom_rules_file else 'false' }}"
+            >
+                <div class="d-flex flex-wrap gap-2">
+                    <a
+                        class="btn btn-outline-secondary"
+                        href="{{ url_for('flickornas.download_rules_file') }}"
+                        download="rules.typ"
+                    >{{ t("rules_file.download") }}</a>
+                    <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        data-restore-rules-file
+                        {% if not has_custom_rules_file %}disabled{% endif %}
+                    >{{ t("rules_file.restore") }}</button>
+                </div>
+                <hr>
+                <form data-rules-file-form>
+                    <label class="form-label" for="rules-file-upload">
+                        {{ t("rules_file.choose") }}
+                    </label>
+                    <input
+                        class="form-control"
+                        id="rules-file-upload"
+                        name="rules"
+                        type="file"
+                        accept=".typ"
+                        data-rules-file-input
+                    >
+                    <div class="d-flex justify-content-end mt-3">
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            disabled
+                            data-upload-rules-file
+                        >{{ t("rules_file.upload") }}</button>
+                    </div>
+                    <div
+                        class="form-text"
+                        role="status"
+                        aria-live="polite"
+                        data-rules-file-status
+                    >{{ t("rules_file.select") }}</div>
+                </form>
+            </section>
+            </div>
+        </div>
+    </div>
+    <script id="selected-tournaments-data" type="application/json">
+        {{ selected_tournaments | tojson }}
+    </script>
+    <script id="selected-player-overrides-data" type="application/json">
+        {{ selected_player_overrides | tojson }}
+    </script>
+    <script id="finals-separators-data" type="application/json">
+        {{ (configuration.finals_separators if configuration else []) | list | tojson }}
+    </script>
+    <script id="club-display-names-data" type="application/json">
+        {{ club_display_names | tojson }}
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/configuration-tab-navigation.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/calendar-rollover.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/tournament-search.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/generation-form.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/player-name-selector.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/club-selector.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/player-override-editor.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/contributor-editor.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/club-display-name-editor.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/finals-editor.js') }}"
+    ></script>
+    <script
+        type="module"
+        src="{{ url_for('flickornas.static', filename='js/rules-file-editor.js') }}"
+    ></script>
+{% endblock %}

@@ -1,0 +1,8 @@
+[
+  {
+    "roundNr": 1,
+    "games": [
+      {"whiteId": 123, "blackId": 456, "result": 1}
+    ]
+  }
+]
