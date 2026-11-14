@@ -42,6 +42,10 @@ the list of player rows. Each row includes the player's integer `member_id` alon
 `name`, `birth_year`, `club`, `tournaments` and `total_points`. Consumers of the earlier array
 payload must now read rows under `standings`. Existing snapshots keep their format until regenerated.
 
+When separators are configured, the payload includes `"finals_separators": [8, 16]`.
+Each number means a separator after that 1-based row in `standings`, matching the PDF.
+The field is omitted when no separators are configured. Changes appear after regeneration.
+
 From the workspace top-level directory, start shared Caddy with the same publisher secret:
 
 ```sh

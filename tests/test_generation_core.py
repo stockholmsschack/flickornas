@@ -297,3 +297,20 @@ def _fixture_arguments() -> dict:
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_generated_json_reflects_configured_then_cleared_separators():
+    for separators in ((1, 2), ()):
+        result = generate_standings(
+            **_fixture_arguments(), finals_separators=separators,
+        )
+        snapshot = json.loads(result.artifacts.standings_json)
+        if separators:
+            assert snapshot["finals_separators"] == [1, 2]
+        else:
+            assert "finals_separators" not in snapshot
+
+
+def test_json_omits_separators_by_default():
+    snapshot = json.loads(serialize_standings_json([], tournament_ids=[]))
+    assert "finals_separators" not in snapshot

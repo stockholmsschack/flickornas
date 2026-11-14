@@ -347,6 +347,7 @@ def produce_artifacts(
         standings_json=serialize_standings_json(
             _public_standings_rows(standings),
             tournament_ids=[int(value) for value in standings.tournament_ids],
+            finals_separators=finals_separators,
         ),
         diagnostic_reports=MappingProxyType(reports),
     )
@@ -354,6 +355,7 @@ def produce_artifacts(
 
 def serialize_standings_json(
     rows: Iterable[Mapping[str, Any]], *, tournament_ids: Sequence[int],
+    finals_separators: Sequence[int] = (),
 ) -> str:
     """Serialize ordered tournament ids and standings with player member ids."""
     validated_rows = []
@@ -427,15 +429,14 @@ def serialize_standings_json(
         raise ValueError("tournament_ids must contain positive integers")
     if len(set(tournament_ids)) != len(tournament_ids):
         raise ValueError("tournament_ids must be unique")
-    return json.dumps(
-        {
-            "last_updated": datetime.now(UTC).isoformat(timespec="seconds"),
-            "tournament_ids": list(tournament_ids),
-            "standings": validated_rows,
-        },
-        ensure_ascii=False,
-        indent=2,
-    ) + "\n"
+    payload = {
+        "last_updated": datetime.now(UTC).isoformat(timespec="seconds"),
+        "tournament_ids": list(tournament_ids),
+        "standings": validated_rows,
+    }
+    if finals_separators:
+        payload["finals_separators"] = list(finals_separators)
+    return json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
 
 
 def create_rendering_projection(
